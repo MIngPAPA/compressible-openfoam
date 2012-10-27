@@ -147,5 +147,3 @@ volScalarField localDt
     dimensionedScalar( "localDt", dimless , 0.0 )
 );
 
-
-
