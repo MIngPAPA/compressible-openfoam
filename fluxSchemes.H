@@ -120,7 +120,6 @@ void roe( scalar *rhoL , vector *uL , scalar *pL ,
 }
 
 /// Van-leer flux vector splitting scheme implemeted by 
-/// Subrahmanya and group as part of the OpenFOAM discussion 
 void van_leer(scalar *rhoL , vector *uL , scalar *pL ,
           scalar *rhoR , vector *uR , scalar *pR ,
           scalar *mass , vector *mom , scalar *energy ,
