@@ -35,4 +35,3 @@
     energyFlux[iface] *= mesh.magSf()[iface];
   }
 
-
