@@ -24,12 +24,14 @@ scalar gbygm1 = gama / ( gama - 1.0 ) , gm1 = gama - 1.0;
 
 /// The normal flux to a face given the state vector 
 /// and normal at a face
-void normalFlux( scalar *rho , vector *u , scalar *p ,
+scalar normalFlux( scalar *rho , vector *u , scalar *p ,
                  vector *normal , scalar f[5] ){
-  f[0] = (*rho) * ( (*u) & (*normal) );
+  scalar ret = (*u) & (*normal);
+  f[0] = (*rho) * ret;
   for( int i = 0 ; i < 3 ; ++i )
     f[i+1] = f[0] * (*u)[i] + (*p) * (*normal)[i];
   f[4] = f[0] * ( gbygm1 * (*p) / (*rho) + 0.5 * ( (*u) & (*u) ) );
+  return std::fabs( ret ) + std::sqrt( gama * (*p) / (*rho) );
 }
 
 //
@@ -49,15 +51,16 @@ void convertPrimitive( scalar *mass , vector *mom , scalar *energy ){
 
 
 /// Riemann solver that takes in density,velocity and 
-/// pressure and return the flux
-void (*fluxSolver)( scalar *rhoL , vector *uL , scalar *pL , 
+/// pressure and return the flux remember that it should
+/// return the scalar value of ( |u_n| + a ) at the interface
+scalar (*fluxSolver)( scalar *rhoL , vector *uL , scalar *pL , 
           scalar *rhoR , vector *uR , scalar *pR ,
           scalar *mass , vector *mom , scalar *energy ,
           vector *normal ) = NULL;
 
 /// Try implementing your own riemann flux scheme
 /// This is Roe's Approximate Riemann solver
-void roe( scalar *rhoL , vector *uL , scalar *pL ,
+scalar roe( scalar *rhoL , vector *uL , scalar *pL ,
           scalar *rhoR , vector *uR , scalar *pR ,
           scalar *mass , vector *mom , scalar *energy ,
           vector *normal ){
@@ -117,10 +120,12 @@ void roe( scalar *rhoL , vector *uL , scalar *pL ,
   for( int i = 0 ; i < 3 ; ++i )
     (*mom)[i] = 0.5 * ( fL[i+1] + fR[i+1] - df1[i+1] - df2[i+1] - df3[i+1] );
   (*energy) = 0.5 * ( fL[4] + fR[4] - df1[4] - df2[4] - df3[4] );
+
+  return std::fabs( VnRoe ) + aRoe;
 }
 
 /// Van-leer flux vector splitting scheme implemeted by 
-void van_leer(scalar *rhoL , vector *uL , scalar *pL ,
+scalar van_leer(scalar *rhoL , vector *uL , scalar *pL ,
           scalar *rhoR , vector *uR , scalar *pR ,
           scalar *mass , vector *mom , scalar *energy ,
           vector *normal){
@@ -149,19 +154,19 @@ void van_leer(scalar *rhoL , vector *uL , scalar *pL ,
       fL[i]= 0.0;
       }}
    if(macL>=1.0){
-     fL[0] = (*rhoL) *VnL;                               
-     fL[1] = (*rhoL)*(*uL)[0]*VnL+(*pL)*(*normal)[0];    
-     fL[2] = (*rhoL)*(*uL)[1]*VnL+(*pL)*(*normal)[1];  
-     fL[3] = (*rhoL)*(*uL)[2]*VnL+(*pL)*(*normal)[2];  
-     fL[4] = (eL+(*pL))*VnL;  
+     fL[0] = (*rhoL) *VnL;
+     fL[1] = (*rhoL)*(*uL)[0]*VnL+(*pL)*(*normal)[0];
+     fL[2] = (*rhoL)*(*uL)[1]*VnL+(*pL)*(*normal)[1];
+     fL[3] = (*rhoL)*(*uL)[2]*VnL+(*pL)*(*normal)[2];
+     fL[4] = (eL+(*pL))*VnL;
    }
    if((macL>-1.0)&&(macL<1.0)){
-     fL[0] = mdotL;                               
-     fL[1] = mdotL*((*uL)[0]+(2-macL)*(aL)*(*normal)[0]/gama);    
-     fL[2] = mdotL*((*uL)[1]+(2-macL)*(aL)*(*normal)[1]/gama);    
-     fL[3] = mdotL*((*uL)[2]+(2-macL)*(aL)*(*normal)[2]/gama);    
-     fL[4] = mdotL*h0L; 
-     } 
+     fL[0] = mdotL;
+     fL[1] = mdotL*((*uL)[0]+(2-macL)*(aL)*(*normal)[0]/gama);
+     fL[2] = mdotL*((*uL)[1]+(2-macL)*(aL)*(*normal)[1]/gama);
+     fL[3] = mdotL*((*uL)[2]+(2-macL)*(aL)*(*normal)[2]/gama);
+     fL[4] = mdotL*h0L;
+     }
 
  ///  To compute the right face  fluxes
   if(macR>=1.0){
@@ -169,18 +174,18 @@ void van_leer(scalar *rhoL , vector *uL , scalar *pL ,
       fR[i]= 0.0;
       }}
    if(macR<=-1.0){
-     fR[0] = (*rhoR) *VnR;                               
-     fR[1] = (*rhoR)*(*uR)[0]*VnR+(*pR)*(*normal)[0];    
-     fR[2] = (*rhoR)*(*uR)[1]*VnR+(*pR)*(*normal)[1];  
-     fR[3] = (*rhoR)*(*uR)[2]*VnR+(*pR)*(*normal)[2];  
-     fR[4] = (eR+(*pR))*VnR;  
+     fR[0] = (*rhoR) *VnR;
+     fR[1] = (*rhoR)*(*uR)[0]*VnR+(*pR)*(*normal)[0];
+     fR[2] = (*rhoR)*(*uR)[1]*VnR+(*pR)*(*normal)[1];
+     fR[3] = (*rhoR)*(*uR)[2]*VnR+(*pR)*(*normal)[2];
+     fR[4] = (eR+(*pR))*VnR;
    }
    if((macR>-1.0)&&(macR<1.0)){
-     fR[0] = mdotR;                               
-     fR[1] = mdotR*((*uR)[0]-(2+macR)*(aR)*(*normal)[0]/gama);    
-     fR[2] = mdotR*((*uR)[1]-(2+macR)*(aR)*(*normal)[1]/gama);    
-     fR[3] = mdotR*((*uR)[2]-(2+macR)*(aR)*(*normal)[2]/gama);    
-     fR[4] = mdotR*h0R;  
+     fR[0] = mdotR;
+     fR[1] = mdotR*((*uR)[0]-(2+macR)*(aR)*(*normal)[0]/gama);
+     fR[2] = mdotR*((*uR)[1]-(2+macR)*(aR)*(*normal)[1]/gama);
+     fR[3] = mdotR*((*uR)[2]-(2+macR)*(aR)*(*normal)[2]/gama);
+     fR[4] = mdotR*h0R;
    }
 
   //  fluxes  fL + fR to yield flux at the interface
@@ -189,6 +194,7 @@ void van_leer(scalar *rhoL , vector *uL , scalar *pL ,
     (*mom)[i-1] =  fL[i] + fR[i] ;
   (*energy) =  fL[4] + fR[4] ;
 
+  return 0.5 * ( std::fabs( VnL + VnR ) + aL + aR );
 }   /// End of Vanleer scheme
 
 

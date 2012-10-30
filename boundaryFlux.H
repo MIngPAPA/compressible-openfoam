@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
-
    /////////////////////////////////////////////////////////////////////////////////
    /// Remember BC's for Gas Dynamics solvers
    /// are based on characteristics and cannot be applied
@@ -44,7 +43,10 @@
          scalar p_e = p[ bfaceCells[iface] ];
          vector normal = nf.boundaryField()[ipatch][iface];
          scalar face_area = mesh.magSf().boundaryField()[ipatch][iface];
+         scalar lambda = std::fabs( U[ bfaceCells[iface] ] & normal ) +
+                         std::sqrt ( gama * p_e / rho[ bfaceCells[iface] ] );
          momResidue[ bfaceCells[iface] ] += p_e * normal * face_area;
+         localDt[ bfaceCells[iface] ]    += lambda * face_area;
        }
      }
   /////////////////////////////////////////////////////////////////////////////////
@@ -56,12 +58,13 @@
          vector normal = nf.boundaryField()[ipatch][iface];
          scalar face_area = mesh.magSf().boundaryField()[ipatch][iface];
          /// Use adjacent cell center value of face to get flux (zeroth order)
-         normalFlux( &rho[myCell] , &U[myCell] , &p[myCell] , &normal , bflux );
+         scalar lambda = normalFlux( &rho[myCell] , &U[myCell] , &p[myCell] , &normal , bflux );
          massResidue[ myCell ]   += bflux[0] * face_area;
          momResidue[ myCell ][0] += bflux[1] * face_area;
          momResidue[ myCell ][1] += bflux[2] * face_area;
          momResidue[ myCell ][2] += bflux[3] * face_area;
          energyResidue[ myCell ] += bflux[4] * face_area;
+         localDt[ myCell ]       += lambda * face_area;
        }
      }
   /////////////////////////////////////////////////////////////////////////////////
@@ -73,12 +76,13 @@
          vector normal = nf.boundaryField()[ipatch][iface];
          scalar face_area = mesh.magSf().boundaryField()[ipatch][iface];
          /// Use free-stream values to calculate face flux
-         normalFlux( &rho_inf , &u_inf , &p_inf , &normal , bflux );
+         scalar lambda = normalFlux( &rho_inf , &u_inf , &p_inf , &normal , bflux );
          massResidue[ myCell ]   += bflux[0] * face_area;
          momResidue[ myCell ][0] += bflux[1] * face_area;
          momResidue[ myCell ][1] += bflux[2] * face_area;
          momResidue[ myCell ][2] += bflux[3] * face_area;
          energyResidue[ myCell ] += bflux[4] * face_area;
+         localDt[ myCell ]       += lambda * face_area;
        }
      }
   /////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +106,7 @@
          vector normal = nf.boundaryField()[ipatch][iface];
          scalar face_area = mesh.magSf().boundaryField()[ipatch][iface];
          // Approximate Riemann solver at interface
-         (*fluxSolver)( &rho[leftCell]  , &U[leftCell]  , &p[leftCell] , // Left
+         scalar lambda = (*fluxSolver)( &rho[leftCell]  , &U[leftCell]  , &p[leftCell] , // Left
               &rhoGhost[rightCell] , &UGhost[rightCell] , &pGhost[rightCell] , // Right
               &tempRhoRes , &tempURes , &tempPRes ,
               &normal );
@@ -110,6 +114,7 @@
          massResidue[leftCell]    += tempRhoRes * face_area;
          momResidue[leftCell]     += tempURes   * face_area;
          energyResidue[leftCell]  += tempPRes   * face_area;
+         localDt[leftCell]        += lambda * face_area;
        }
      }
   /////////////////////////////////////////////////////////////////////////////////
