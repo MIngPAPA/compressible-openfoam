@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
-
+  rhoResidMax = 0.0;
   /// Convert to conservative
   forAll( rho , icell ){
     convertConservative( &rho[icell] , &U[icell] , &p[icell] );
@@ -25,6 +25,8 @@
     rho[icell] = rho[icell] - localDt[icell] * massResidue[icell];
     U[icell]   = U[icell]   - localDt[icell] * momResidue[icell];
     p[icell]   = p[icell]   - localDt[icell] * energyResidue[icell];
+    if( fabs( localDt[icell] * massResidue[icell] ) > rhoResidMax ) 
+      rhoResidMax = fabs( localDt[icell] * massResidue[icell] );
     /// Convert to primitive
     convertPrimitive( &rho[icell] , &U[icell] , &p[icell] );
     localDt[icell] = 0.0;

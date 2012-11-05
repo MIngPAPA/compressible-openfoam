@@ -92,9 +92,9 @@
        scalar tempRhoRes , tempPRes ;
        vector tempURes;
        /// Exchange the processor boundary values
-       rho.correctBoundaryConditions();
-       U.correctBoundaryConditions();
-       p.correctBoundaryConditions();
+       rho.boundaryField()[ipatch].evaluate();
+       U.boundaryField()[ipatch].evaluate();
+       p.boundaryField()[ipatch].evaluate();
        /// Get the ghost values (belonging to neighbour processor)
        scalarField rhoGhost = rho.boundaryField()[ipatch].patchNeighbourField();
        vectorField UGhost   = U.boundaryField()[ipatch].patchNeighbourField();
