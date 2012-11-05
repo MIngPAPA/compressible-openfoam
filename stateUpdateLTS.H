@@ -21,7 +21,7 @@
   /// Convert to conservative
   forAll( rho , icell ){
     convertConservative( &rho[icell] , &U[icell] , &p[icell] );
-    localDt[icell] = localDt[icell] / mesh.V()[icell];
+    localDt[icell] = CFL / localDt[icell] ;
     rho[icell] = rho[icell] - localDt[icell] * massResidue[icell];
     U[icell]   = U[icell]   - localDt[icell] * momResidue[icell];
     p[icell]   = p[icell]   - localDt[icell] * energyResidue[icell];
@@ -29,4 +29,4 @@
     convertPrimitive( &rho[icell] , &U[icell] , &p[icell] );
     localDt[icell] = 0.0;
   }
- 
+

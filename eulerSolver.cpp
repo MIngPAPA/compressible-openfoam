@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
    #include "readFluxScheme.H"
 
    /// Freestream values
-   scalar rho_inf = 1.228 , p_inf = 101325.0, M_inf = 2.0 ;
+   scalar rho_inf = 1.228 , p_inf = 101325.0, M_inf = 2.0 , CFL = 0.5;
    scalar magU_inf = std::sqrt( 1.40e0 * p_inf / rho_inf ) * M_inf;
    vector u_inf ( magU_inf , 0.0 , 0.0 );
    // Unit face normals
@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
      #include "boundaryFlux.H"
      
      /// State update
-     #include "stateUpdate.H"
-//     #include "stateUpdateLTS.H"
+//     #include "stateUpdate.H"
+     #include "stateUpdateLTS.H"
 
      // Solution output
      runTime.write();

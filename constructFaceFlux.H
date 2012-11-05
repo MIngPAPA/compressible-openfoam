@@ -33,7 +33,7 @@ forAll( mesh.owner() , iface ) {
   massFlux[iface] *= mesh.magSf()[iface];
   momFlux[iface] *= mesh.magSf()[iface];
   energyFlux[iface] *= mesh.magSf()[iface];
-  localDt[ leftCell ]  += lambda;
-  localDt[ rightCell ] -= lambda;
+  localDt[ leftCell ]  += lambda * mesh.magSf()[iface];
+  localDt[ rightCell ] += lambda * mesh.magSf()[iface];
 }
 
