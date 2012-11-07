@@ -68,6 +68,26 @@
        }
      }
   /////////////////////////////////////////////////////////////////////////////////
+                          /// Extrapolation Outlet BC ///
+  /////////////////////////////////////////////////////////////////////////////////
+     if( BCTypePhysical == "riemannExtrapolation" ) {
+       forAll( bfaceCells  , iface ) {
+         label myCell = bfaceCells[iface];
+         vector normal = nf.boundaryField()[ipatch][iface] , UResid;
+         scalar face_area = mesh.magSf().boundaryField()[ipatch][iface];
+         scalar mResid , pResid;
+         /// Use adjacent cell center value of face to get flux (zeroth order)
+         scalar lambda = 
+          (*fluxSolver)( &rho[myCell] , &U[myCell] , &p[myCell] , /// Left state is extrapolated state
+                         &rho_inf , &u_inf , &p_inf ,  /// Right state is free-stream
+                         &mResid  , &UResid , &pResid , &normal );
+         massResidue[ myCell ]   += mResid * face_area;
+         momResidue[ myCell ]    += UResid * face_area;
+         energyResidue[ myCell ] += pResid * face_area;
+         localDt[ myCell ]       += lambda * face_area;
+       }
+     }
+  /////////////////////////////////////////////////////////////////////////////////
                      /// Supersonic Inlet BC ( Drichlet BC )  ///
   /////////////////////////////////////////////////////////////////////////////////
      if( BCTypePhysical == "supersonicInlet" ) {
