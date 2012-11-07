@@ -32,3 +32,6 @@
     localDt[icell] = 0.0;
   }
 
+  if ( Pstream::parRun() )
+    MPI_Allreduce( MPI_IN_PLACE , &rhoResidMax , 1 , MPI_DOUBLE , MPI_MAX , MPI_COMM_WORLD );
+   

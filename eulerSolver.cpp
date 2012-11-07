@@ -21,6 +21,7 @@
 #include<fvCFD.H>
 #include<UList.H>
 #include "fluxSchemes.H"
+#include "mpi.h"
 
 int main(int argc, char *argv[])
 {
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
      /// State update
      #include "stateUpdateLTS.H"
 
-     Info << "Iteration = " << iter++ << " Max residue = " << rhoResidMax << nl << endl;
+     Info << "Iteration = " << iter++ << " Max residue = " << rhoResidMax << endl;
      /// Solution output
      runTime.write();
    }
