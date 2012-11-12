@@ -34,10 +34,11 @@ if (mesh.schemesDict().found("fluxScheme"))
     fluxSolver = &van_leer;
   }
   else{
-    FatalErrorIn("EulerSolver::readFluxScheme") << "fluxScheme: " << fluxScheme
-                                                << " is not a valid choice. "
-                                                << "Options are: roe,van_leer"
-                                                << abort(FatalError);
+    FatalErrorIn("EulerSolver::readFluxScheme") 
+      << "fluxScheme: " << fluxScheme
+      << " is not a valid choice. "
+      << "Options are: roe,van_leer"
+      << abort(FatalError);
   }
 }
 
