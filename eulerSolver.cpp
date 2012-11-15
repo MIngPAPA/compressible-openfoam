@@ -32,9 +32,13 @@ int main(int argc, char *argv[])
    #include "readFluxScheme.H"
 
    /// Freestream values
-   scalar rho_inf = 4.308162190 , p_inf = 315979.7630, M_inf = 0.8349 , CFL = 0.5;
+   //scalar rho_inf = 4.308162190 , p_inf = 315979.7630, M_inf = 0.8349 , CFL = 0.5;
+   //scalar magU_inf = std::sqrt( 1.40e0 * p_inf / rho_inf ) * M_inf , rhoResidMax = 0.0;
+   //vector u_inf ( 268.6264 , 0.0 , 14.3602 );
+   scalar rho_inf = 1.228 , p_inf = 101325.0, M_inf = 2.0 , CFL = 0.1;
    scalar magU_inf = std::sqrt( 1.40e0 * p_inf / rho_inf ) * M_inf , rhoResidMax = 0.0;
-   vector u_inf ( 268.6264 , 0.0 , 14.3602 );
+   vector u_inf ( magU_inf , 0.0 , 0.0 );
+
    // Unit face normals
    surfaceVectorField nf = mesh.Sf() / mesh.magSf();
    long int iter = 1;
@@ -45,6 +49,19 @@ int main(int argc, char *argv[])
      /// Post the non-blocking send/recv of fields
 //     #include "initEvaluateFields.H"
 
+        surfaceScalarField rho_pos =
+            fvc::interpolate(rho, pos, "reconstruct(rho)");
+        surfaceScalarField rho_neg =
+            fvc::interpolate(rho, neg, "reconstruct(rho)");
+        surfaceVectorField U_pos =
+            fvc::interpolate(U, pos, "reconstruct(U)");
+        surfaceVectorField U_neg =
+            fvc::interpolate(U, neg, "reconstruct(U)");
+        surfaceScalarField p_pos =
+            fvc::interpolate(p, pos, "reconstruct(p)");
+        surfaceScalarField p_neg =
+            fvc::interpolate(p, neg, "reconstruct(p)");
+ 
      /// Construct the fluxes at faces
      #include "constructFaceFlux.H"
      

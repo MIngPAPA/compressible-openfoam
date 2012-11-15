@@ -167,3 +167,28 @@ volScalarField localDt
     dimensionedScalar( "localDt", dimless , 0.0 )
 );
 
+surfaceScalarField pos
+(
+    IOobject
+    (
+        "pos",
+        runTime.timeName(),
+        mesh
+    ),
+    mesh,
+    dimensionedScalar("pos", dimless, 1.0)
+);
+
+surfaceScalarField neg
+(
+    IOobject
+    (
+        "neg",
+        runTime.timeName(),
+        mesh
+    ),
+    mesh,
+    dimensionedScalar("neg", dimless, -1.0)
+);
+
+
