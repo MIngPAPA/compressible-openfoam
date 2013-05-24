@@ -24,13 +24,16 @@ divSchemes
 
 gradSchemes
 {
-    default         none;
+   default   Gauss;
 }
 
 laplacianSchemes
 {
     default         none;
 }
-
+interpolationSchemes 
+{
+    default SuperBee;
+}
 // ************************************************************************* //
 
