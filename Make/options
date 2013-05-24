@@ -4,6 +4,4 @@ EXE_INC = \
     -g
 
 EXE_LIBS = \
-    -lfiniteVolume \
-    -lmpi \
-    -lmpi_cxx
+    -lfiniteVolume
