@@ -21,7 +21,6 @@
 #include<fvCFD.H>
 #include<UList.H>
 #include "fluxSchemes.H"
-#include "mpi.h"
 
 int main(int argc, char *argv[])
 {
