@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [1 -1 -1 0 0 0 0]; // N/m^2 = kg / m / s
+dimensions      [0 0 0 0 0 0 0]; // dimensionless
 
 internalField   uniform 101325.0;
 
