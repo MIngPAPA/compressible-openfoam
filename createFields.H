@@ -28,10 +28,11 @@ volScalarField rho
     "rho",
     runTime.timeName(),
     mesh,
-    IOobject::MUST_READ,
+    IOobject::NO_READ,
     IOobject::AUTO_WRITE
   ),
-  mesh
+  mesh,
+  dimensionedScalar( "rho", dimless, rho_inf )
 );
 //////////////////////
 /// Fluid Velocity ///
@@ -43,10 +44,11 @@ volVectorField U
     "U",
     runTime.timeName(),
     mesh,
-    IOobject::MUST_READ,
+    IOobject::NO_READ,
     IOobject::AUTO_WRITE
   ),
-  mesh
+  mesh,
+  dimensionedVector( "U", dimless, u_inf )
 );
 //////////////////////
 /// Fluid Pressure ///
@@ -58,10 +60,11 @@ volScalarField p
     "p",
     runTime.timeName(),
     mesh,
-    IOobject::MUST_READ,
+    IOobject::NO_READ,
     IOobject::AUTO_WRITE
   ),
-  mesh
+  mesh,
+  dimensionedScalar( "p", dimless, p_inf )
 );
 //////////////////////////////////////////////
 /// Face Momentum Flux ( \rhouu \cdot ds ) ///
@@ -75,9 +78,7 @@ surfaceVectorField momFlux
         mesh
     ),
     mesh,
-    dimensionedVector( "momFlux", 
-       rho.dimensions() * U.dimensions() * U.dimensions() * mesh.Sf().dimensions(), 
-       vector( 0.0 , 0.0 , 0.0 ) )
+    dimensionedVector( "massFlux", dimless, vector( 0.0 , 0.0 , 0.0 ) )
 );
 //////////////////////////////////////////
 /// Face Mass Flux ( \rho u \cdot ds ) ///
@@ -91,7 +92,7 @@ surfaceScalarField massFlux
         mesh
     ),
     mesh,
-    dimensionedScalar( "massFlux", rho.dimensions() * U.dimensions() * mesh.Sf().dimensions(), 0.0 )
+    dimensionedScalar( "massFlux", dimless, 0.0 )
 );
 ////////////////////////
 /// Face Energy Flux ///
@@ -105,7 +106,7 @@ surfaceScalarField energyFlux
         mesh
     ),
     mesh,
-    dimensionedScalar( "energyFlux", p.dimensions() * U.dimensions() * mesh.Sf().dimensions(), 0.0 )
+    dimensionedScalar( "energyFlux", dimless, 0.0 )
 );
 //////////////////////
 ///  Mass residue  ///
@@ -119,8 +120,7 @@ volScalarField massResidue
         mesh
     ),
     mesh,
-    dimensionedScalar( "massResidue", 
-       rho.dimensions() * U.dimensions() * U.dimensions() * mesh.Sf().dimensions(), 0.0)
+    dimensionedScalar( "massResidue", dimless, 0.0)
 );
 ////////////////////////
 /// Momentum residue ///
@@ -134,9 +134,7 @@ volVectorField momResidue
         mesh
     ),
     mesh,
-    dimensionedVector( "momResidue", 
-       rho.dimensions() * U.dimensions() * U.dimensions() * mesh.Sf().dimensions(), 
-       vector( 0.0 , 0.0 , 0.0 ) )
+    dimensionedVector( "momResidue", dimless, vector( 0.0 , 0.0 , 0.0 ) )
 );
 //////////////////////
 /// Energy residue ///
@@ -150,7 +148,7 @@ volScalarField energyResidue
         mesh
     ),
     mesh,
-    dimensionedScalar( "energyResidue", p.dimensions() * U.dimensions() * mesh.Sf().dimensions(), 0.0 )
+    dimensionedScalar( "energyResidue", dimless, 0.0 )
 );
 ///////////////////////
 /// Local Time Step ///

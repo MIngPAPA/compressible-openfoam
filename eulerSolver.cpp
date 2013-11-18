@@ -27,9 +27,9 @@ int main(int argc, char *argv[])
    #include "setRootCase.H"
    #include "createTime.H"
    #include "createMesh.H"
+   #include "setFreeStream.H"
    #include "createFields.H"
    #include "readFluxScheme.H"
-   #include "setFreeStream.H"
 
    // Unit face normals
    surfaceVectorField nf = mesh.Sf() / mesh.magSf();
