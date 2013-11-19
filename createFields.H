@@ -170,3 +170,6 @@ volScalarField localDt
     dimensionedScalar( "localDt", dimless , 0.0 )
 );
 
+// Unit face normals
+surfaceVectorField nf = mesh.Sf() / mesh.magSf();
+ 

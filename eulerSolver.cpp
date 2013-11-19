@@ -31,13 +31,10 @@ int main(int argc, char *argv[])
 
    #include "createFields.H"
    #include "readFluxScheme.H"
-
-   // Unit face normals
-   surfaceVectorField nf = mesh.Sf() / mesh.magSf();
-   long int iter = 1;
-       
+      
    /// Time step loop
    /// Posts the non-blocking send/recv of fields
+   size_t iter = 1;
    while( runTime.loop() ) {
 
      /// Construct the fluxes at faces
