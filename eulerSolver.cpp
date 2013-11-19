@@ -43,24 +43,9 @@ int main(int argc, char *argv[])
    long int iter = 1;
        
    /// Time step loop
+   /// Posts the non-blocking send/recv of fields
    while( runTime.loop() ) {
 
-     /// Post the non-blocking send/recv of fields
-//     #include "initEvaluateFields.H"
-
-        surfaceScalarField rho_pos =
-            fvc::interpolate(rho, pos, "reconstruct(rho)");
-        surfaceScalarField rho_neg =
-            fvc::interpolate(rho, neg, "reconstruct(rho)");
-        surfaceVectorField U_pos =
-            fvc::interpolate(U, pos, "reconstruct(U)");
-        surfaceVectorField U_neg =
-            fvc::interpolate(U, neg, "reconstruct(U)");
-        surfaceScalarField p_pos =
-            fvc::interpolate(p, pos, "reconstruct(p)");
-        surfaceScalarField p_neg =
-            fvc::interpolate(p, neg, "reconstruct(p)");
- 
      /// Construct the fluxes at faces
      #include "constructFaceFlux.H"
      
