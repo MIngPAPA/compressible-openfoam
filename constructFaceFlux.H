@@ -25,12 +25,8 @@ forAll( mesh.owner() , iface ) {
   leftCell = mesh.owner()[iface];
   rightCell = mesh.neighbour()[iface]; 
   /// Approximate Riemann solver at interface 
-/*  scalar lambda = (*fluxSolver)( &rho[leftCell]  , &U[leftCell]  , &p[leftCell] , /// Left
+  scalar lambda = (*fluxSolver)( &rho[leftCell]  , &U[leftCell]  , &p[leftCell] , /// Left
        &rho[rightCell] , &U[rightCell] , &p[rightCell] ,          /// Right
-       &massFlux[iface] , &momFlux[iface] , &energyFlux[iface] ,
-       &nf[iface] );*/
-  scalar lambda = (*fluxSolver)( &rho_pos[iface]  , &U_pos[iface]  , &p_pos[iface] , /// Left
-       &rho_neg[iface] , &U_neg[iface] , &p_neg[iface] ,          /// Right
        &massFlux[iface] , &momFlux[iface] , &energyFlux[iface] ,
        &nf[iface] );
   /// Multiply with face area to get face flux
