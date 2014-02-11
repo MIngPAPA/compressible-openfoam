@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
       
    /// Time step loop
    /// Posts the non-blocking send/recv of fields
-   size_t iter = 1;
+   long int iter = 0;
    while( runTime.loop() ) {
 
      /// Construct the fluxes at faces
@@ -45,11 +45,13 @@ int main(int argc, char *argv[])
      
      /// Obtain boundary fluxes
      #include "boundaryFlux.H"
-     
+
+     Info << "Iteration = " << ++iter << "  ";
+
      /// State update
      #include "stateUpdateLTS.H"
 
-     Info << "Iteration = " << iter++ << " Max residue = " << rhoResidMax << endl;
+      Info << " Max residue = " << rhoResidMax << endl;
      /// Solution output
      runTime.write();
    }

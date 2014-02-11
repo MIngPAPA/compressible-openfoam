@@ -18,6 +18,14 @@
 
 \*---------------------------------------------------------------------------*/
   rhoResidMax = 0.0;
+  scalar lambda_ds_max = 0.0,
+         lambda_ds_min = std::numeric_limits<scalar>::max();
+  forAll( rho , icell ){
+    if( fabs( localDt[icell] ) > lambda_ds_max )
+      lambda_ds_max = fabs( localDt[icell] );
+    if( fabs( localDt[icell] ) < lambda_ds_min )
+      lambda_ds_min = fabs( localDt[icell] );
+  } 
   /// Convert to conservative
   forAll( rho , icell ){
     convertConservative( &rho[icell] , &U[icell] , &p[icell] );
@@ -25,6 +33,7 @@
     rho[icell] = rho[icell] - localDt[icell] * massResidue[icell];
     U[icell]   = U[icell]   - localDt[icell] * momResidue[icell];
     p[icell]   = p[icell]   - localDt[icell] * energyResidue[icell];
+    /// Calcuate maximum residue
     if( fabs( localDt[icell] * massResidue[icell] ) > rhoResidMax ) 
       rhoResidMax = fabs( localDt[icell] * massResidue[icell] );
     /// Convert to primitive
@@ -32,6 +41,8 @@
     localDt[icell] = 0.0;
   }
 
+  Info << "Lambda min/max = " << lambda_ds_max << "  " << lambda_ds_min << "  ";
+
   if ( Pstream::parRun() )
-    reduce( rhoResidMax , sumOp<scalar>() );
+    reduce( rhoResidMax , maxOp<scalar>() );
    
